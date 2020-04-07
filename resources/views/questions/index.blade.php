@@ -3,8 +3,9 @@
     <div class="container">
         <div class="row">
             <div class="col-md-12">
-                <div class="d-flex justify-content-end mb-3">
-                    <a href="{{route('questions.create')}}" class="btn btn-outline-primary">Ask a question</a>
+
+                <div class="d-flex justify-content-end mb-3 mt-3">
+                    <a href="{{route('questions.create')}}" class="btn btn-outline-primary">Ask a Question</a>
                 </div>
                 <div class="card">
                     <div class="card-header">
@@ -32,10 +33,24 @@
 
                                 </div>
                                 <div class="media-body">
-                                
+
                                     <div class="d-flex justify-content-between">
-                                        <h4><a href="{{$question->url}}">{{$question->title}}</a></h4>
-                                        <a href="{{route('questions.edit',$question->id)}}" class="btn btn-sm btn-outline-info">Edit</a>
+                                        <div>
+                                            <h4><a href="{{$question->url}}">{{$question->title}}</a></h4>
+                                        </div>
+                                        <div class="d-flex flex-row">
+                                            <a href="{{route('questions.edit',$question->id)}}" class="btn btn-sm btn-outline-info mr-2">Edit</a>
+                                            <form action="{{route('questions.destroy',$question->id)}}" method="POST">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit"
+                                                        onclick="return confirm('Do you want to delete')"
+                                                        class="btn btn-sm btn-outline-danger ">
+
+                                                    Delete
+                                                </button>
+                                            </form>
+                                        </div>
                                     </div>
                                     <p>
                                         Asked by: <a href="#">{{$question->owner->name}}</a>

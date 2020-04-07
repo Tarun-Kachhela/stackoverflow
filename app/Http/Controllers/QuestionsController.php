@@ -63,9 +63,10 @@ class QuestionsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Question $question)
     {
-        //
+        $question->increment('views_count');
+        return view('questions.show',compact('question'));
     }
 
     /**
@@ -100,11 +101,15 @@ class QuestionsController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param  Question
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Question $question)
     {
         //
+        $question->delete();
+        session()->flash('success','Question has been deleted successfully');
+        return redirect(route('questions.index'));
+
     }
 }
