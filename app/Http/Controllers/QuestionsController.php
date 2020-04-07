@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Question;
 use Illuminate\Http\Request;
+use App\Http\Requests\Questions\CreateQuestionRequest;
+use App\Http\Requests\Questions\UpdateQuestionRequest;
 
 class QuestionsController extends Controller
 {
@@ -12,6 +14,11 @@ class QuestionsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    public function __construct()
+    {
+        $this->middleware(['auth'])->except(['index','show']);
+        // $this->middleware(['auth'])->only(['create','store']);
+    }
     public function index()
     {
         $questions = Question::with('owner')->latest()->paginate(10);
@@ -25,18 +32,29 @@ class QuestionsController extends Controller
      */
     public function create()
     {
-        //
+        return view('questions.create');
     }
+
+
+
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param  CreateQuestionRequest  $request
+     * @return void
      */
-    public function store(Request $request)
+    public function store(CreateQuestionRequest $request)
     {
-        //
+        
+        auth()->user()->questions()->create([
+            'title' => $request->title,
+            'body' => $request->body,
+        ]);
+
+        session()->flash('success','Question has been added successfully');
+        return redirect(route('questions.index'));
+
     }
 
     /**
@@ -56,21 +74,27 @@ class QuestionsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Question $question)
     {
-        //
+        return view('questions.edit',compact("question"));
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param  \Illuminate\Http\UpdateQuestionRequest  $request
+     * @param  Question
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(UpdateQuestionRequest $request, Question $question)
     {
-        //
+        $question->update([
+            "title" => $request->title,
+            "body" => $request->body,
+        ]);
+
+        session()->flash('success','Question has been Modified successfully');
+        return redirect(route('questions.index'));
     }
 
     /**
